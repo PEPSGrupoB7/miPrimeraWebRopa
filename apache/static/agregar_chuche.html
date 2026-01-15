@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanWear - Agregar Prenda</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(120deg, #111, #444);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav {
+        background-color: #e91e63;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+        font-weight: bold;
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+
+    h1, h3 {
+        text-align: center;
+    }
+
+    .section {
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .input, .button {
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .btn-agregar {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .btn-editar {
+        background-color: #2196f3;
+        color: white;
+    }
+
+    .btn-eliminar {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .btn-cerrar {
+        background-color: #607d8b;
+        color: white;
+    }
+</style>
+<script>
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+function guardar(){
+    let nombre = document.getElementById("nombre").value;
+    let descripcion = document.getElementById("descripcion").value;
+    let precio = document.getElementById("precio").value;
+    let talla = document.getElementById("talla").value;
+    let color = document.getElementById("color").value;
+    let categoria = document.getElementById("categoria").value;
+    let foto = document.getElementById("foto").value;
+
+    let datos = JSON.stringify({
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "precio": precio,
+        "talla": talla,
+        "color": color,
+        "categoria": categoria,
+        "foto": foto
+    });
+
+    fetch("/api/chuches/", { method: 'POST', headers: myHeaders, body: datos })
+        .then(response => response.json())
+        .then(result => {
+            if(result.status === "OK"){
+                alert("Prenda guardada correctamente");
+                location.href="chuches.html";
+            } else {
+                alert("No se pudo guardar la prenda");
+            }
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Ha ocurrido un error al guardar la prenda");
+        });
+}
+
+function cerrarSesion(){
+    fetch("/api/usuarios/logout", { method: 'GET', headers: myHeaders })
+        .then(response => response.json())
+        .then(result => {
+            if(result.status === "OK"){
+                location.href="index.html";
+            } else {
+                alert("No se ha podido cerrar sesión");
+            }
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Se ha producido un error al cerrar sesión");
+        });
+}
+</script>
+</head>
+<body>
+<nav>
+    <div>
+        <a href="chuches.html">Catálogo</a>
+        <a href="ficheros.html">Archivos</a>
+    </div>
+    <div>
+        <a href="javascript:cerrarSesion()" class="button btn-cerrar">Cerrar sesión</a>
+    </div>
+</nav>
+
+<section class="section">
+    <h3>Agregar Prenda</h3>
+    <label for="nombre">Nombre:</label>
+    <input required type="text" class="input" id="nombre" placeholder="Nombre">
+
+    <label for="descripcion">Descripción:</label>
+    <input required type="text" class="input" id="descripcion" placeholder="Descripción">
+
+    <label for="precio">Precio:</label>
+    <input required type="number" class="input" id="precio" placeholder="Precio">
+
+    <label for="talla">Talla:</label>
+    <input required type="text" class="input" id="talla" placeholder="Talla">
+
+    <label for="color">Color:</label>
+    <input required type="text" class="input" id="color" placeholder="Color">
+
+    <label for="categoria">Categoría:</label>
+    <input required type="text" class="input" id="categoria" placeholder="Categoría">
+
+    <label for="foto">Foto (URL):</label>
+    <input required type="text" class="input" id="foto" placeholder="URL de la foto">
+
+    <button type="button" class="button btn-agregar" onclick="guardar()">Guardar</button>
+    <a href="chuches.html" class="button btn-editar">Volver</a>
+</section>
+</body>
+</html>

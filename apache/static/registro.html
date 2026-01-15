@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanWear - Registro</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(120deg, #111, #444);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .section {
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    input, .button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
+
+    .button {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        opacity: 0.9;
+    }
+
+    .error {
+        display: none;
+        color: #ff5252;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .btn-volver {
+        background-color: #607d8b;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+<script>
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+function conectar() {
+    document.getElementsByClassName("error")[0].style.display = "none";
+    var raw = JSON.stringify({
+        "username": document.getElementById("username").value,
+        "password": document.getElementById("password").value,
+        "profile": document.getElementById("profile").value
+    });
+
+    fetch("/api/usuarios/registro", {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status == "OK") {
+            alert("Usuario registrado correctamente");
+            location.href = "index.html";
+        } else {
+            document.getElementsByClassName("error")[0].style.display = "block";
+        }
+    })
+    .catch(error => console.log('error', error));
+}
+</script>
+</head>
+<body>
+<section class="section">
+    <h1>Registro del Sistema</h1>
+    <label>Usuario</label>
+    <input type="text" id="username" placeholder="Nombre de usuario" required>
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="Clave" required>
+    <label>Perfil</label>
+    <input type="text" id="profile" value="normal" disabled>
+    <label class="error">Usuario ya existe</label>
+    <button class="button" type="button" onclick="conectar()">Registrar</button>
+    <button class="btn-volver" type="button" onclick="location.href='index.html'">Volver al inicio</button>
+</section>
+</body>
+</html>

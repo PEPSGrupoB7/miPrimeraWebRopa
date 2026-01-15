@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+
+    <title>MODERNITOS CLUB | Acceso</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(120deg, #111, #444);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .login-box {
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-login {
+            background-color: #e91e63;
+            color: white;
+        }
+
+        .btn-register {
+            background-color: #607d8b;
+            color: white;
+        }
+
+        .btn-comments {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .error {
+            display: none;
+            color: #ff5252;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .section {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        function verComentarios() {
+            location.href = "comentarios.html";
+        }
+
+        function conectar() {
+            document.getElementsByClassName("error")[0].style.display = "none";
+
+            var raw = JSON.stringify({
+                "username": document.getElementById("username").value,
+                "password": document.getElementById("password").value
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw
+            };
+
+            fetch("/api/usuarios/login", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status == "OK") {
+                        location.href = "chuches.html";
+                    } else {
+                        document.getElementsByClassName("error")[0].style.display = "block";
+                    }
+                })
+                .catch(error => console.log('error', error));
+        }
+    </script>
+</head>
+
+<body>
+
+    <h1>MODERNITOS CLUB</h1>
+
+    <div class="login-box">
+        <label>Usuario</label>
+        <input type="text" id="username">
+
+        <label>Contraseña</label>
+        <input type="password" id="password">
+
+        <label class="error">Usuario o contraseña incorrectos</label>
+
+        <button class="btn-login" type="button" onclick="conectar()">INICIAR SESIÓN</button>
+        <button class="btn-register" type="button" onclick="location.href='registro.html'">CREAR CUENTA</button>
+    </div>
+
+    <section class="section">
+        <h3>Opiniones de clientes</h3>
+        <button class="btn-comments" type="button" onclick="verComentarios()">Ver comentarios</button>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanWear - Catálogo</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(120deg, #111, #444);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #e91e63;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        h1, h3 {
+            text-align: center;
+        }
+
+        .section {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+            color: #fff;
+        }
+
+        th {
+            background-color: #e91e63;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        img {
+            border-radius: 5px;
+        }
+
+        .button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .btn-agregar {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-editar {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .btn-eliminar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-cerrar {
+            background-color: #607d8b;
+            color: white;
+        }
+
+        .error {
+            display: none;
+            color: #ff5252;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        a.button {
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+    </style>
+    <script>
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        onload = function(){
+            pedirChuches();
+        }
+
+        function pintarChuches(lista){
+            let tbody = document.getElementsByTagName("tbody")[0];
+            tbody.innerText = "";
+
+            lista.forEach(prenda => {
+                let texto = `<tr>
+                        <td><img src="${prenda.foto}" width="70"></td>
+                        <td>${prenda.nombre}</td>
+                        <td>${prenda.descripcion}</td>
+                        <td>${prenda.talla}</td>
+                        <td>${prenda.color}</td>
+                        <td>${prenda.categoria}</td>
+                        <td>${prenda.precio}</td>
+                        <td>
+                            <a href="editar_chuche.html?id=${prenda.id}" class="button btn-editar">Editar</a>
+                        </td>
+                        <td>
+                            <button class="button btn-eliminar" onclick="eliminarChuche(${prenda.id})">Eliminar</button>
+                        </td>
+                    </tr>`;
+                tbody.innerHTML += texto;
+            });
+        }
+
+        function pedirChuches(){
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+            };
+
+            fetch("/api/chuches/", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    pintarChuches(result);
+                })
+                .catch(error => {
+                    console.log('error', error);
+                    alert("Ha habido un error al recuperar la ropa. Refresque la página");
+                });
+        }
+
+        function eliminarChuche(id){
+            var requestOptions = {
+                method: 'DELETE',
+                headers: myHeaders,
+            };
+
+            fetch("/api/chuches/"+id, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status == "OK"){
+                        alert("Prenda eliminada");
+                        pedirChuches();
+                    } else {
+                        alert("La prenda no ha podido ser eliminada");
+                    }
+                })
+                .catch(error => {
+                    console.log('error', error);
+                    alert("Se ha producido un error y la prenda no ha podido ser eliminada");
+                });
+        }
+
+        function cerrarSesion(){
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders
+            };
+            fetch("/api/usuarios/logout", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status == "OK"){
+                        location.href="index.html";
+                    } else {
+                        alert("No se ha podido cerrar sesión");
+                    }
+                })
+                .catch(error => {
+                    console.log('error', error);
+                    alert("Se ha producido un error y no se ha podido cerrar sesión");
+                });
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <div>
+            <a href="chuches.html">Catálogo</a>
+            <a href="ficheros.html">Archivos</a>
+        </div>
+        <div>
+            <a href="javascript:cerrarSesion()" class="button btn-cerrar">Cerrar sesión</a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <h3>Catálogo MODERNITOS CLUB</h3>
+        <a id="enlaceAgregar" href="agregar_chuche.html" class="button btn-agregar">Agregar Prenda</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Talla</th>
+                    <th>Color</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+</body>
+</html>

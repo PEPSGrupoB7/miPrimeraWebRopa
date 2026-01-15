@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanWear - Comentarios</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(120deg, #111, #444);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h3 {
+        text-align: center;
+    }
+
+    .section {
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: center;
+        color: #fff;
+    }
+
+    th {
+        background-color: #e91e63;
+    }
+
+    tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    input, .button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
+
+    .button {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        opacity: 0.9;
+    }
+
+    .btn-volver {
+        background-color: #607d8b;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        display: block;
+        width: fit-content;
+        text-align: center;
+    }
+</style>
+<script>
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+onload = function() {
+    pedirComentarios();
+}
+
+function guardarComentario() {
+    var raw = JSON.stringify({
+        "usuario": document.getElementById("usuario").value,
+        "descripcion": document.getElementById("descripcion").value
+    });
+
+    fetch("/api/comentarios/", {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === "OK") {
+            alert("Comentario almacenado");
+            pedirComentarios();
+        } else {
+            alert("El comentario no ha podido almacenarse");
+        }
+    })
+    .catch(error => console.log('error', error));
+}
+
+function pintarComentarios(lista) {
+    let tbody = document.getElementsByTagName("tbody")[0];
+    tbody.innerText = "";
+
+    lista.forEach(comentario => {
+        let texto = `<tr>
+                        <td>${comentario.usuario}</td>
+                        <td>${comentario.descripcion}</td>
+                    </tr>`;
+        tbody.innerHTML += texto;
+    });
+}
+
+function pedirComentarios() {
+    fetch("/api/comentarios/", { method: 'GET', headers: myHeaders })
+        .then(response => response.json())
+        .then(result => {
+            if(result) pintarComentarios(result);
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Ha habido un error al recuperar los comentarios");
+        });
+}
+</script>
+</head>
+<body>
+
+<section class="section">
+    <h3>Comentarios</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<section class="section">
+    <h3>Agregar Comentario</h3>
+    <label for="usuario">Usuario:</label>
+    <input type="text" id="usuario" placeholder="Nombre del usuario">
+    <label for="descripcion">Comentario:</label>
+    <input type="text" id="descripcion" placeholder="Escribe tu comentario">
+    <button type="button" class="button" onclick="guardarComentario()">Guardar</button>
+    <button class="btn-volver" onclick="location.href='index.html'">Volver al inicio</button>
+</section>
+
+</body>
+</html>

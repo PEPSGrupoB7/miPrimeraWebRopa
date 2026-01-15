@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanWear - Archivos</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(120deg, #111, #444);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav {
+        background-color: #e91e63;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+        font-weight: bold;
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+
+    h1, h3 {
+        text-align: center;
+    }
+
+    .section {
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    input, textarea, .button {
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
+
+    textarea {
+        height: 200px;
+        resize: vertical;
+    }
+
+    .button {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-cerrar {
+            background-color: #607d8b;
+            color: white;
+        }
+
+    .button:hover {
+        opacity: 0.9;
+    }
+</style>
+<script>
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+function enviarArchivo(){
+    const formData = new FormData();
+    formData.append('fichero', document.getElementById("fichero").files[0]);
+    formData.append('nombre', document.getElementById("nombre").value);
+
+    fetch("/api/ficheros/", { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === "OK"){
+                alert("Archivo subido correctamente");
+                location.reload();
+            } else {
+                alert("El archivo no ha podido subirse");
+            }
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Ha habido un error al subir el archivo");
+        });
+}
+
+function verArchivo(){
+    const nombreArchivo = document.getElementById("nombreArchivo").value;
+    fetch("/api/ficheros/" + nombreArchivo, { method: 'GET' })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === "OK"){
+                document.getElementById("contenidoArchivo").innerText = result.contenido;
+            } else {
+                document.getElementById("contenidoArchivo").innerText = "EL CONTENIDO NO ESTÁ DISPONIBLE";
+            }
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Ha habido un error al recuperar el archivo");
+        });
+}
+
+function cerrarSesion(){
+    fetch("/api/usuarios/logout", { method: 'GET', headers: myHeaders })
+        .then(response => response.json())
+        .then(result => {
+            if(result.status === "OK"){
+                location.href="index.html";
+            } else {
+                alert("No se ha podido cerrar sesión");
+            }
+        })
+        .catch(error => {
+            console.log('error', error);
+            alert("Error al cerrar sesión");
+        });
+}
+</script>
+</head>
+<body>
+<nav>
+    <div>
+        <a href="chuches.html">Catálogo</a>
+        <a href="ficheros.html">Archivos</a>
+    </div>
+    <div>
+        <a href="javascript:cerrarSesion()" class="button btn-cerrar">Cerrar sesión</a>
+    </div>
+</nav>
+
+<section class="section">
+    <h3>Subir un Archivo</h3>
+    <label for="nombre">Nombre del archivo</label>
+    <input type="text" id="nombre" placeholder="Nombre del archivo">
+    <label for="fichero">Archivo</label>
+    <input type="file" id="fichero">
+    <button type="button" class="button" onclick="enviarArchivo()">Subir</button>
+</section>
+
+<section class="section">
+    <h3>Ver Contenido de un Archivo</h3>
+    <label for="nombreArchivo">Nombre del archivo</label>
+    <input type="text" id="nombreArchivo" placeholder="Nombre del archivo">
+    <button type="button" class="button" onclick="verArchivo()">Ver</button>
+    <label for="contenidoArchivo">Contenido del archivo</label>
+    <textarea id="contenidoArchivo" readonly></textarea>
+</section>
+</body>
+</html>
