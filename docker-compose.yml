@@ -19,7 +19,7 @@ services:
     environment:
       PMA_HOST: mariadb-b7
     ports:
-      - "6111:80"
+      - "7107:80"
     depends_on:
       - mariadb
 
