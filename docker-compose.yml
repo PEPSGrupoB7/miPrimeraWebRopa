@@ -19,7 +19,7 @@ services:
     environment:
       PMA_HOST: mariadb
     ports:
-      - "9093:80"
+      - "48129:80"
     depends_on:
       - mariadb
 
@@ -41,7 +41,7 @@ services:
     build: ./apache
     container_name: apache-waf
     ports:
-      - "9090:80"
+      - "48123:80"
     depends_on:
       - python
 
