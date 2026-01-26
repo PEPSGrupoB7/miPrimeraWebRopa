@@ -1,7 +1,7 @@
 services:
   mariadb:
     image: mariadb
-    container_name: mariadb
+    container_name: mariadb-b7
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
@@ -14,10 +14,10 @@ services:
 
   phpmyadmin:
     image: phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin-b7
     restart: always
     environment:
-      PMA_HOST: mariadb
+      PMA_HOST: mariadb-b7
     ports:
       - "6111:80"
     depends_on:
@@ -25,12 +25,12 @@ services:
 
   python:
     build: ./api
-    container_name: python
+    container_name: python-b7
     environment:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
-      DB_HOST: mariadb
+      DB_HOST: mariadb-b7
       DB_PORT: 3306
       PORT: 8080
       HOST: 0.0.0.0
@@ -39,7 +39,7 @@ services:
 
   apache-waf:
     build: ./apache
-    container_name: apache-waf
+    container_name: apache-waf-b7
     ports:
       - "6107:80"
     depends_on:
