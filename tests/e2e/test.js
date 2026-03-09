@@ -12,7 +12,6 @@ describe('Pruebas E2E de mi web', () => {
     await page.goto('http://host.docker.internal:9081');
 
     const title = await page.title();
-
     expect(title).toBe('Mi Primera Web Ropa');
 
     await browser.close();
