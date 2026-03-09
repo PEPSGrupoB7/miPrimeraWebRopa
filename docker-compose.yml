@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   mariadb:
-    image: mariadb:10.11
+    image: mariadb
     container_name: mariadb-b7
     restart: unless-stopped
     environment:
@@ -13,21 +11,17 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./Chuches.sql:/docker-entrypoint-initdb.d/Chuches.sql:ro
-    networks:
-      - miprimeraweb-net
 
   phpmyadmin:
-    image: phpmyadmin:5
+    image: phpmyadmin
     container_name: phpmyadmin-b7
     restart: unless-stopped
     environment:
       PMA_HOST: mariadb-b7
     ports:
-      - "7107:80"  # acceso desde host
+      - "7107:80"
     depends_on:
       - mariadb
-    networks:
-      - miprimeraweb-net
 
   python:
     build: ./api
@@ -43,10 +37,6 @@ services:
       HOST: 0.0.0.0
     depends_on:
       - mariadb
-    networks:
-      - miprimeraweb-net
-    ports:
-      - "9081:8080"
 
   apache-waf:
     build: ./apache
@@ -56,12 +46,6 @@ services:
       - "6107:80"
     depends_on:
       - python
-    networks:
-      - miprimeraweb-net
 
 volumes:
   mariadb_data:
-
-networks:
-  miprimeraweb-net:
-    driver: bridge
