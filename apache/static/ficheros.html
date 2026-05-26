@@ -77,13 +77,21 @@
 <script>
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
+if (sessionStorage.getItem("csrf_token")) {
+    myHeaders.append("X-CSRFToken", sessionStorage.getItem("csrf_token"))
+}
 
 function enviarArchivo(){
     const formData = new FormData();
     formData.append('fichero', document.getElementById("fichero").files[0]);
     formData.append('nombre', document.getElementById("nombre").value);
 
-    fetch("/api/ficheros/", { method: 'POST', body: formData })
+    const headers = new Headers();
+    if (sessionStorage.getItem("csrf_token")) {
+        headers.append("X-CSRFToken", sessionStorage.getItem("csrf_token"));
+    }
+
+    fetch("/api/ficheros/", { method: 'POST', headers: headers, body: formData })
         .then(response => response.json())
         .then(result => {
             if (result.status === "OK"){

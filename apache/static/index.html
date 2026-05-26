@@ -94,8 +94,11 @@
     </style>
 
     <script>
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+if (sessionStorage.getItem("csrf_token")) {
+    myHeaders.append("X-CSRFToken", sessionStorage.getItem("csrf_token"))
+}
 
         function verComentarios() {
             location.href = "comentarios.html";
@@ -109,22 +112,22 @@
                 "password": document.getElementById("password").value
             });
 
-            var requestOptions = {
+            fetch("/api/usuarios/login", {
                 method: 'POST',
                 headers: myHeaders,
                 body: raw
-            };
-
-            fetch("/api/usuarios/login", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status == "OK") {
-                        location.href = "chuches.html";
-                    } else {
-                        document.getElementsByClassName("error")[0].style.display = "block";
-                    }
-                })
-                .catch(error => console.log('error', error));
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status == "OK") {
+                    sessionStorage.setItem("csrf_token", result.csrf_token)
+                    sessionStorage.setItem("perfil", result.perfil)
+                    location.href = "chuches.html";
+                } else {
+                    document.getElementsByClassName("error")[0].style.display = "block";
+                }
+            })
+            .catch(error => console.log('error', error));
         }
     </script>
 </head>

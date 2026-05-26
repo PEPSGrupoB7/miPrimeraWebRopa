@@ -1,32 +1,33 @@
 from bd import obtener_conexion
-import sys
-import datetime as dt
-
+from funciones_auxiliares import sanitize_field
 
 def convertir_comentario_a_json(comentario):
     d = {}
     d['id'] = comentario[0]
-    d['usuario'] = comentario[1]
-    d['descripcion'] = comentario[2]
+    d['usuario'] = sanitize_field(comentario[1])
+    d['descripcion'] = sanitize_field(comentario[2])
     return d
 
 def insertar_comentario(usuario, descripcion):
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
-            cursor.execute("INSERT INTO comentarios(usuario, descripcion) VALUES ('"+ usuario +"','" + descripcion + "')")
+            cursor.execute(
+                "INSERT INTO comentarios(usuario, descripcion) VALUES (%s, %s)",
+                (usuario, descripcion)
+            )
             conexion.commit()
         conexion.close()
-        ret={"status": "OK" }
-        code=200
-    except:
-        ret={"status": "ERROR" }
-        print("Excepcion al insertar un comentario", flush=True)
-        code=500   
-    return ret,code
+        ret = {"status": "OK"}
+        code = 200
+    except Exception as e:
+        print("Excepcion al insertar un comentario:", e, flush=True)
+        ret = {"status": "ERROR"}
+        code = 500
+    return ret, code
 
 def obtener_comentarios():
-    comentariosjson=[]
+    comentariosjson = []
     try:
         conexion = obtener_conexion()
         with conexion.cursor() as cursor:
@@ -36,8 +37,8 @@ def obtener_comentarios():
                 for comentario in comentarios:
                     comentariosjson.append(convertir_comentario_a_json(comentario))
         conexion.close()
-        code=200
-    except:
-        print("Excepcion al consultar todas los comentarios", flush=True)
-        code=500
-    return comentariosjson,code
+        code = 200
+    except Exception as e:
+        print("Excepcion al consultar comentarios:", e, flush=True)
+        code = 500
+    return comentariosjson, code

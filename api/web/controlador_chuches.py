@@ -1,16 +1,17 @@
 from bd import obtener_conexion
+from funciones_auxiliares import sanitize_field
 
 
 def convertir_chuche_a_json(ropa):
     d = {}
     d['id'] = ropa[0]
-    d['nombre'] = ropa[1]
-    d['descripcion'] = ropa[2]
+    d['nombre'] = sanitize_field(ropa[1])
+    d['descripcion'] = sanitize_field(ropa[2])
     d['precio'] = float(ropa[3])
-    d['talla'] = ropa[4]
-    d['color'] = ropa[5]
-    d['categoria'] = ropa[6]
-    d['foto'] = ropa[7]
+    d['talla'] = sanitize_field(ropa[4])
+    d['color'] = sanitize_field(ropa[5])
+    d['categoria'] = sanitize_field(ropa[6])
+    d['foto'] = sanitize_field(ropa[7])
     return d
 
 

@@ -35,6 +35,9 @@ services:
       DB_PORT: 3306
       PORT: 8080
       HOST: 0.0.0.0
+      PASSWORD_PEPPER: ${PASSWORD_PEPPER}
+      SECRET_KEY: ${SECRET_KEY}                      
+      WTF_CSRF_SECRET_KEY: ${WTF_CSRF_SECRET_KEY}  
     depends_on:
       - mariadb
 
