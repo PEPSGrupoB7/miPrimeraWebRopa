@@ -37,7 +37,6 @@ def compare_password(password_hash, password):
     try:
         PEPPER_KEY = os.getenv("PASSWORD_PEPPER")
         password_peppered = password + PEPPER_KEY
-        # Convertir hash a bytes si viene como string
         if isinstance(password_hash, str):
             password_hash = password_hash.encode("utf-8")
         return bcrypt.checkpw(password_peppered.encode("utf-8"), password_hash)
