@@ -11,17 +11,8 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./Chuches.sql:/docker-entrypoint-initdb.d/Chuches.sql:ro
-
-  phpmyadmin:
-    image: phpmyadmin
-    container_name: phpmyadmin-b7
-    restart: unless-stopped
-    environment:
-      PMA_HOST: mariadb-b7
-    ports:
-      - "7107:80"
-    depends_on:
-      - mariadb
+    networks:
+      - backend
 
   python:
     build: ./api
@@ -36,10 +27,13 @@ services:
       PORT: 8080
       HOST: 0.0.0.0
       PASSWORD_PEPPER: ${PASSWORD_PEPPER}
-      SECRET_KEY: ${SECRET_KEY}                      
-      WTF_CSRF_SECRET_KEY: ${WTF_CSRF_SECRET_KEY}  
+      SECRET_KEY: ${SECRET_KEY}
+      WTF_CSRF_SECRET_KEY: ${WTF_CSRF_SECRET_KEY}
     depends_on:
       - mariadb
+    networks:
+      - frontend
+      - backend
 
   apache-waf:
     build: ./apache
@@ -50,6 +44,14 @@ services:
       - "6443:443"
     depends_on:
       - python
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 
 volumes:
   mariadb_data:
